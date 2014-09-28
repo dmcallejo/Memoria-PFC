@@ -1,0 +1,167 @@
+\documentclass[11pt, a4paper, twoside, titlepage]{book}
+
+% Paquetes usados
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[a4paper, top=4cm, bottom=4cm, left=3.3cm, right=3.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage[all]{xy}
+\usepackage{float}
+\usepackage{epigraph}
+\usepackage{array}
+\usepackage{footnote}
+\usepackage[official]{eurosym}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+\usepackage{fixltx2e}	%subscript
+\usepackage{multirow}
+
+
+%\usepackage{quotchap}
+
+% Aumentar la separacion entre lineas
+\renewcommand{\baselinestretch}{1.5}
+\newcommand{\bigcell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}} %Tablas de varias lineas
+\newcommand{\tred}[1]{\pdfcolorstack\ColorStack push {1 0 0 rg} #1 \pdfcolorstack\ColorStack pop} %Color rojo para pdftex
+\makesavenoteenv{tabular}
+\newcommand{\ts}{\textsuperscript}		% alias para superscript
+\newcommand{\tsub}{\textsubscript}	% alias para subscript
+\DeclareUnicodeCharacter{20AC}{\euro{}} % para escribir € sin tanta movida
+
+%Deshabilitar palabras cortadas a final de línea (y el guioncete majo)
+\pretolerance=2000
+\tolerance=3000
+
+
+% Para eliminar la cabecera de las paginas vacias al final de los
+% capítulos
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+  \hbox{}
+    \thispagestyle{empty}
+      \newpage
+        \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+%%
+
+\begin{document}
+
+\chardef\ColorStack=\pdfcolorstackinit page direct{0 g} % pdflatex black font.
+
+\pagestyle{empty}
+
+\include{portada}
+\cleardoublepage
+
+% Numeración romana de p-ginas
+\pagenumbering{roman}
+
+
+% Especificación del pfc
+%\include{especificacion}
+
+% Dedicatoria y agradecimientos
+\include{agradecimientos}
+
+
+
+% Resumen y palabras clave
+\include{resumen}
+\cleardoublepage
+
+% Definimos el encabezado y pie de página
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{%
+\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{%
+\markright{\thesection.\ #1}{}}
+\fancyhead{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO,ER]{\rightmark}
+\fancyfoot{}
+
+
+% Índice de capítulos, secciones y subsecciones
+\tableofcontents
+\cleardoublepage
+
+% Índice de figuras
+\listoffigures
+\cleardoublepage
+
+
+% Redefinición del nombre que encabeza las tablas. Por defecto es cuadro.
+\renewcommand\tablename{Tabla}
+\renewcommand\listtablename{Índice de tablas}
+
+% Índice de tablas 
+\listoftables
+\cleardoublepage
+
+
+% Numeración normal de páginas
+\pagenumbering{arabic}
+
+
+% Definimos el encabezado y pie de página
+\fancyhead{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\rightmark}
+\fancyhead[ER]{\leftmark}
+
+% Capítulos
+\include{cap1}
+%\pagebreak
+\include{cap2}
+%\pagebreak
+\include{cap3}
+%\pagebreak
+\include{cap4}
+%\pagebreak
+\include{cap5}
+%\pagebreak
+\include{cap6}
+%\pagebreak%
+\include{cap7}
+%\pagebreak
+\include{cap8}
+%\pagebreak
+
+%\include{cap9}
+%\pagebreak
+
+% Apéndices
+\appendix
+%\include{apen1}
+\pagebreak
+%\include{apen2}
+\pagebreak
+%\include{apen3}
+\pagebreak
+
+
+% Definimos el encabezado y pie de página
+\fancyhead{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO,ER]{\rightmark}
+
+% Glosario de términos
+%\printglossary
+
+
+% Bibliografía
+%\bibliographystyle{empty}
+%\bibliography{biblio}
+
+\include{biblio}
+
+
+
+
+\end{document}

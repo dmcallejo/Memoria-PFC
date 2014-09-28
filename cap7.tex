@@ -1,0 +1,321 @@
+\chapter{Evaluación y pruebas.}
+\epigraphhead [30]{%
+  \epigraph{``Las máquinas son cada vez más eficientes y mejores, por lo que queda claro que la imperfección es la grandeza del hombre."}
+  {Ernst Fischer, filósofo.}%
+}
+
+En este capítulo se describen las pruebas que se han ejecutado sobre el software con el fin de ponerlo a prueba, conocer la exactitud temporal con la que los datos son medidos y sus limitaciones.
+
+\section{Descripción de las pruebas.}
+	Para la realización de este capítulo se van a obtener dos elementos: la frecuencia real a la que el sistema está tomando medidas y la carga del sistema en cada una de ellas. Para obtener el primer dato hemos calculado el intervalo medio entre medidas dividiendo el tiempo real que ha tomado la adquisición entre el número de datos y luego se ha realizado su inversa, como indica la \autoref{eq:Fr}.
+
+\begin{equation}\label{eq:Fr}
+	 		\bar{F}_{Real}=\dfrac{1}{T_{total}/n_{medidas}}
+\end{equation}
+
+	El procedimiento de las pruebas ha sido el siguiente:
+
+\begin{itemize}
+	\item Se han elaborado una serie de tests basados en la frecuencia y canales usados en la adquisición de datos para obtener una medida de cuál es la frecuencia máxima a la que se puede operar con nuestra solución actual y se ha anotado la carga del sistema para evaluar cual es el motivo de la limitación en cada caso.
+	
+	\item Se han adquirido datos a distintas frecuencias durante un tiempo mínimo de cinco minutos en cada caso, variando desde 1Hz hasta 2000Hz con un canal, hasta 1000Hz con dos canales simultáneamente y hasta 750Hz con cuatro canales. 
+	\item Se han exportado los datos mediante el módulo interno del programa, trasladado a una hoja de cálculo y obtenido la frecuencia media real de la adquisición mediante \ref{eq:Fr}.
+	\item Se ha comparado la frecuencia real obtenida en el apartado anterior con la frecuencia teórica en orden de calcular el error absoluto medio y error relativo porcentual mediante las fórmulas \ref{eq:Ea} y \ref{eq:Er} respectivamente. donde $ \bar{F_r} $ representa la frecuencia media real obtenida en \ref{eq:Fr} y F la frecuencia teórica.
+	
+	 	\begin{equation}\label{eq:Ea}
+	 		\bar{\epsilon_{a}}=\left|\bar{F_r}-F\right|
+	 	\end{equation}
+		\begin{equation}\label{eq:Er}
+			 \bar{\epsilon_{r}}=\left|\dfrac{\bar{F_r}-F}{F}\right|\cdot100
+		\end{equation}
+
+\end{itemize}
+	Los datos se representarán en tablas con los siguientes datos:
+	\begin{itemize}
+		\item{F (Hz)}: Frecuencia en herzios especificada en la interfaz del programa.
+		\item{T\tsub{total}}: Tiempo total de la adquisición de datos, medido en segundos.
+		\item{Nº\tsub{muestras}}: Número de muestras realizadas en la adquisición.
+		\item{$ ·T_{medio} $}: Intervalo medio entre medidas, especificado en segundos.
+		\item{$\bar{F}_{Real}$}: Frecuencia real a la que se ha realizado la adquisición, calculado por la \autoref{eq:Fr}.
+		\item{$ \bar{\epsilon_{a}} $}: Error absoluto de la frecuencia, calculado por la \autoref{eq:Ea} y medido en Hz.
+		\item{$ \bar{\epsilon_{r}} $ }: Error relativo de la frecuencia, calculado por la \autoref{eq:Er}, en porcentaje (\%).
+	\end{itemize}
+
+\subsection{Carga del sistema.}
+	 La carga del sistema se ha medido mediante el comando \emph{uptime}\footnote{\url{http://en.wikipedia.org/wiki/Uptime\#Linux} (en inglés)} y anotando el segundo valor de carga al representar la misma durante los últimos cinco minutos. 
+	 
+	 Por realizar una explicación rápida de como se mide la carga del sistema, si el valor obtenido es de 0.60, el sistema ha estado de media un 40\% del tiempo libre de carga. En cambio si es por ejemplo de 1.60, el sistema ha tenido de media un 60\% de sobrecarga, y quiere decir al ser este un sistema monoprocesador que 0.60 procesos de media han tenido que esperar para obtener tiempo de CPU\cite{wikipedia_cpuload}. Como nota, la carga del sistema en \emph{idle} (sin utilizar) es de 0.11, por tanto un 11\% del tiempo de procesamiento lo utiliza el sistema operativo.
+	 
+	 No se debe confundir la sobrecarga con que el sistema no es capaz de realizar la tarea especificada o que las restricciones temporales no se van a poder cumplir. Como se puede comprobar más adelante en las pruebas, el uso intensivo de la CPU por el programa no ha provocado medidas imprecisas.
+	 
+	 \subsection{¿Cuándo una medida no es válida y el sistema ha tocado su límite?}
+	Se ha decidido que una frecuencia deja de ser precisa a partir del 0,25\% de error relativo ($ \epsilon_r$). A partir de la adquisición tachada como no válida se realiza una o dos medidas más y se comparan las cargas en el sistema en ambos casos para investigar la causa del error.
+	 
+	\subsection{¿De dónde puede proceder el límite?}	 
+	 Los orígenes que se toman de la limitación pueden ser bien de la propia capacidad de cómputo de la Raspberry Pi, o del sistema de entrada/salida o el mismo hardware que no es capaz de entregar los datos al ritmo que se exigen. Para discernir entre ambas posibilidades hemos obtenido los siguientes niveles de carga que tiene nuestro programa sin utilizar el interfaz de adquisición mediante el uso del simulador funcionando a la máxima velocidad que nos permite el sistema:
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{| c | c |}
+  	\hline
+    Número de canales activos & Carga del sistema \\ \hline
+	1 			&	2.02	\\ \hline
+	2 			&	2.40	\\ \hline
+	4 			&	4.92	\\ \hline
+  \end{tabular}
+  \caption{Cargas máximas en el sistema sin utilizar el interfaz de adquisición.}
+  \label{tab:test_cargas_sim}
+\end{table}
+	
+	Por otra parte, se ha comprobado empíricamente que la carga total por la que el sistema se queda totalmente congelado e inusable es a partir de aproximadamente 5.00.
+	
+	Con estos valores, si la carga del sistema durante la adquisición de datos en los casos donde el error no es tolerable es similar o superior a la determinada en la \autoref{tab:test_cargas_sim}, el cuello de botella lo estará creando la Raspberry; mientras que si no es así el cuello de botella estará en el sistema de entrada/salida o el hardware de adquisición de datos, y el sistema aún tendrá recursos para ir más rápido.
+	
+	Destacar que la carga del sistema es un valor muy abstracto y variable, la única manera de llegar a una conclusión es mediante la realización de todas las pruebas y la puesta en común de las mismas, que se realiza al final del capítulo.
+	
+\section{Pruebas con un solo canal.}
+	Las primeras pruebas se realizan con utilizando un solo canal adquiriendo datos a distintas frecuencias. Se recogen los resultados en la \autoref{tab:test_1ch}. 
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c | }
+  	\hline
+    F (Hz) & T\tsub{total} (s) & Nº\tsub{muestras}& $ ·T_{medio} $ (s) & $\bar{F}_{Real}$ (Hz) & $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) \\ \hline
+	1 			&	358,0001	&	358			&	1,00000 		&	0,9999			&	3,7454E-7	&	3,7454E-5 	\\ \hline
+	2 			&	324,0001	&	648			&	0,50000 		&	1,9999			&	9,0651E-7	&	4,5325E-5 	\\ \hline
+	5			&	310,2001	&	1551		&	0,20000 		&	4,9999			&	2,2781E-6	&	4,5562E-5 	\\ \hline
+	10		&	302,5014	&	3025		&	0,10000 		&	9,9999			&	4,8082E-5	&	0,000480 	\\ \hline
+	50		&	340,2401	&	17012		&	0,02000		&	49,9999		&	1,8537E-5	&	3,7075E-5 	\\ \hline
+	100		&	304,9405	&	30494		&	0,01000		&	99,9998		&	0,000168	&	0,000168 	\\ \hline
+	500		&	308,0007	&	153750	&	0,00200		&	499,1871	&	0,812882	&	0,162576 	\\ \hline
+	1000	&	312,9217	&	312872	&	0,001000	&	999,8411	&	0,158891	&	0,015889 	\\ \hline
+	1250	&	348,1531	&	393899	&	0,000883	&	\tred{1131,392} & \tred{118,6071}	&	\tred{9,488575} 	\\ \hline
+	1500	&	320,4741	&	364017	&	0,000880	&	\tred{1135,869}	&	\tred{364,1300}	&	\tred{24,27533} 	\\ \hline
+	2000	&	333,6778	&	376117	&	0,000887	&	\tred{1127,186}	&	\tred{872,8139}	&	\tred{43,64069} 	\\ \hline
+  \end{tabular}
+  \caption{Resultados de los tests utilizando un solo canal.}
+  \label{tab:test_1ch}
+\end{table}
+  
+  
+  Como se puede observar, las adquisiciones tienen un error relativo tolerable hasta los 1000Hz (por debajo del 1\%) habiendo siendo el pico más alto de un 0,16\% dado en los 500Hz y seguramente por algún fallo puntual, puesto que en la siguiente medida de 1000Hz el error es bastante inferior (0,015\%).
+  
+   No obstante, a partir del kilohercio hay errores del 24\% en 1500Hz y del 43\% en 2000Hz, dejando frecuencias medias de 1135,8Hz y 1127,1Hz reales respectivamente, errores ya por tanto no tolerables. 
+   
+   \subsection{Cargas del sistema en cada caso.}
+   En la \autoref{tab:test_1chLoad} se comparan los errores con la carga del sistema.
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{| c | c | c | c | }
+  	\hline
+    F (Hz) &  $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) & Carga del sistema \\ \hline
+	1 			&	3,7454E-7	&	3,7454E-5 	&	0.38 	\\ \hline
+	2 			&	9,0651E-7	&	4,5325E-5 	&	0.37	\\ \hline
+	5			&	2,2781E-6	&	4,5562E-5 	&	0.32	\\ \hline
+	10		&	4,8082E-5	&	0,0004808 	&	0.35	\\ \hline
+	50		&	1,8537E-5	&	3,7075E-5 	&	0.37	\\ \hline
+	100		&	0,0001680	&	0,0001680 	&	0.52	\\ \hline
+	500		&	0,8128820	&	0,1625764 	&	0.71	\\ \hline
+	1000	&	0,1588911	&	0,0158891  &	1.45	\\ \hline
+	1250	&	\tred{118,60719}	&	\tred{9,4885755} & 1.55	\\	 \hline
+	1500	&	\tred{364,13002}	&	\tred{24,275335} & 1.68	\\ \hline
+	2000	&	\tred{872,81390}	&	\tred{43,640695} & 1.69	\\ \hline
+  \end{tabular}
+  \caption{Comparación del error con la carga del sistema al utilizar un solo canal.}
+  \label{tab:test_1chLoad}
+\end{table}
+
+Entre 1 y 100Hz la carga es prácticamente inexistente, el sistema funciona ligero y con más del 50\% de ciclos libres.
+
+A partir de 100Hz la carga empieza a ser más notable y a crecer conforme las frecuencias suben, y a los 1000Hz el sistema lleva ya un 45\% de sobrecarga. De todos modos, la sobrecarga no es alarmante ya que el error relativo sigue siendo bajo, indicando que las restricciones temporales se cubren razonablemente.
+
+Analizando los tres últimos valores testados donde los errores han sido muy altos, 1250Hz, 1500Hz y 2000Hz, las cargas son muy similares y por debajo de los 2.02 que consideramos en \ref{tab:test_cargas_sim} que podría correr el programa sin problema en este tipo de prueba. Por tanto se considera que el cuello de botella en este test no se encuentra en el programa por una carga excesiva en la CPU si no en la entrada/salida o el hardware de adquisición.
+
+\section{Pruebas con dos canales simultáneamente.}
+El siguiente test es con dos canales adquiriendo datos cuyos resultados se pueden ver en la \autoref{tab:test_2ch}. 
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c | }
+  	\hline
+    F (Hz) & T\tsub{total} (s) & Nº\tsub{muestras}& $ ·T_{medio} $ (s) & $\bar{F}_{Real}$ (Hz) & $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) \\ \hline
+	\multirow{2}{*}{1} 		&	329,0002	&	328			&	1,00000 		&	0,9999			&	8,8734E-7	&	8,8734E-5 	\\
+										&	329,0002	&	328			&	1,00000 		&	0,9999			&	7,2321E-7	&	7,2321E-5 	\\ \hline 
+	\multirow{2}{*}{2} 		&	317,0001	&	634			&	0,50000		& 1,9999			&	8,2384E-7	&	4,1192E-5 	\\
+										&	316,5001	&	633			&	0,50000		& 1,9999			&	7,6650E-7	&	3,8325E-5	\\ \hline 
+										\multicolumn{7}{|c|}{. . .} \\ \hline
+	%\multirow{2}{*}{5} 		&	326,6001	&	1633		&	0,20000		& 4,9999			&	2,7614E-6	&	5,5228E-5 	\\
+										%&	326,0001	&	1629		&	0,20000		& 4,9999			&	2,7165E-6	&	5,4330E-5	\\ \hline 
+	%\multirow{2}{*}{10}	&	363,9001	&	3630		&	0,10000		& 9,9999			&	4,4472E-6	&	4,4472E-5 	\\
+										%&	363,6007	&	3636		&	0,10000		& 9,9999			&	2,1952E-5	&	0,0002195	\\ \hline 
+	%\multirow{2}{*}{50}	&	391,9001	&	19595		&	0,02000		& 49,9999		&	2,3018E-5	&	4,6037E-5 	\\
+										%&	391,3208	&	19566		&	0,02000		& 49,9998		&	0,0001063	&	0,0002127	\\ \hline 
+	%\multirow{2}{*}{100}	&	319,1501	&	31915		&	0,01000		& 99,9999		&	4,9838E-5	&	4,9838E-5 	\\
+										%&	318,6724	&	31867		&	0,01000		& 99,9992		&	0,0007617	&	0,0007617	\\ \hline 
+	\multirow{2}{*}{500}	&	325,1106	&	162551	&	0,00200		& 499,9867		&	0,0132585	&	0,0026517 	\\
+										&	324,6987	&	162349	&	0,00200		& 499,9987		&	0,0012213	&	0,0002442	\\ \hline 
+	\multirow{2}{*}{750}	&	319,3583	&	199363	&	0,00160		& \tred{624,2611}	&	\tred{125,7388}	&	\tred{16,76517} 	\\
+										&	318,8745	&	201618	&	0,00158		& \tred{632,2799}	&	\tred{117,7200}	&	\tred{15,69601}	\\ \hline 
+	\multirow{2}{*}{1000}&	349,3195	&	219508	&	0,00159		& \tred{628,3873}	&	\tred{371,6126}	&	\tred{37,16126} 	\\
+										&	348,9656	&	216182	&	0,00161		& \tred{619,4936}	&	\tred{380,5063}	&	\tred{38,05063}	\\ \hline 
+  \end{tabular}
+  \caption{Resultados de los tests utilizando dos canales.}
+  \label{tab:test_2ch}
+\end{table}
+
+	En este caso el error relativo se dispara a partir de los 500Hz, teniendo en los tests a 750Hz una frecuencia real de algo más de 624Hz y 632Hz en cada canal, sugiriendo que el límite para este tipo de adquisición se encuentra alrededor de esos valores.. En los casos precedentes el error sigue siendo contenido y satisfactorio dada la naturaleza de propósito general de este sistema. Se han ignorado los valores entre 2Hz y 500Hz al ser todos muy parecidos y no aportar nada al lector.
+
+   \subsection{Cargas del sistema en cada caso.}
+	En la \autoref{tab:test_2chLoad} se comparan los resultados con las cargas del sistema.
+	 
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{| c | c | c | c | }
+  	\hline
+    F (Hz) &  $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) & Carga del sistema \\ \hline
+	\multirow{2}{*}{1} 		&	8,8734E-7	&	8,8734E-5 	& \multirow{2}{*}{0.24}\\
+										&	7,2321E-7	&	7,2321E-5 	&	\\ \hline 
+	\multirow{2}{*}{2} 		&	8,2384E-7	&	4,1192E-5 	& \multirow{2}{*}{0.32}\\
+										&	7,6650E-7	&	3,8325E-5	&	\\ \hline 
+	\multirow{2}{*}{5} 		&	2,7614E-6	&	5,5228E-5 	& \multirow{2}{*}{0.32}\\
+										&	2,7165E-6	&	5,4330E-5	&	\\ \hline 
+	\multirow{2}{*}{10}	&	4,4472E-6	&	4,4472E-5 	& \multirow{2}{*}{0.33}\\
+										&	2,1952E-5	&	0,0002195	&	\\ \hline 
+	\multirow{2}{*}{50}	&	2,3018E-5	&	4,6037E-5 	& \multirow{2}{*}{0.43}\\
+										&	0,0001063	&	0,00021274&	\\ \hline 
+	\multirow{2}{*}{100}	&	4,9838E-5	&	4,98389E-5 	& \multirow{2}{*}{0.56}\\
+										&	0,0007617	&	0,00076173	&	\\ \hline 
+	\multirow{2}{*}{500}	&	0,0132585	&	0,00265171 	& \multirow{2}{*}{1.36}\\
+										&	0,0012213	&	0,00024427	&	\\ \hline 
+	\multirow{2}{*}{750}	&	\tred{125,7388}	&	\tred{16,76517} & \multirow{2}{*}{1.80}\\
+										&	\tred{117,7200}	&	\tred{15,69601}	&	\\ \hline 
+	\multirow{2}{*}{1000}&	\tred{371,6126}	&	\tred{37,16126}	& \multirow{2}{*}{2.08}\\
+										&	\tred{380,5063}	&	\tred{38,05063}	&	\\ \hline 
+  \end{tabular}
+  \caption{Comparación del error con la carga del sistema al utilizar dos canales.}
+  \label{tab:test_2chLoad}
+\end{table}
+
+	El sistema comienza a sobrecargarse en los 500Hz pero al igual que en las pruebas anteriores, este 36\% extra de procesamiento no compromete la frecuencia a la que se toman los datos ya que los errores siguen siendo muy bajos.
+	
+	No obstante, los dos valores donde el error se dispara, 750Hz y 1000Hz, la sobrecarga alcanza en este último caso el 108\%  frente a los 140\% estimados en  \ref{tab:test_cargas_sim} y puede indicar que en este caso la capacidad de la propia Raspberry Pi es la limitante. Pero volviendo a los datos sobre la frecuencia media real de estos dos casos en la \autoref{tab:test_2ch} se puede observar que la suma de la misma en cada caso son 1256,541Hz y 1247,880Hz, cuando el caso límite de las pruebas con un solo canal arrojaron una frecuencia límite de 1135,8Hz. Los valores son muy próximos entre sí por lo que realmente no queda claro si puede ser una cosa u otra.
+
+
+
+\section{Pruebas con cuatro canales simultáneamente.}
+Las últimas pruebas corresponden a las realizadas con cuatro canales adquiriendo datos simultáneamente y cuyos resultados se pueden ver en la \autoref{tab:test_4ch}.
+
+	Se han vuelto a ignorar los resultados entre 2Hz y 250Hz al no ser útiles para el lector. En este caso el funcionamiento es aceptable hasta el test de los 500Hz, donde el error supera el 35\% en todos los canales y la frecuencia media real es de casi 317Hz en el canal más lento. 
+	
+	Se puede comprobar como parece haber un límite global en la frecuencia en la que el interfaz puede funcionar ya que la suma de todas las frecuencias medias reales obtenidas en 500Hz es 1284,06Hz y a 750Hz es 1286,831Hz, tal y como se sugirió en la prueba anterior obteniendo un límite máximo de 1256,541Hz y en la primera prueba con 1135,8Hz.
+	
+	
+	
+		\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c | }
+  	\hline
+    F (Hz) & T\tsub{total} (s) & Nº\tsub{muestras}& $ ·T_{medio} $ (s) & $\bar{F}_{Real}$ (Hz) & $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) \\ \hline
+	\multirow{4}{*}{1} 		&	322,0001	&	323			&	1,00000 		&	0,9999			&	5,6303E-7	&	5,6303E-5	\\
+										&	322,0001	&	323			&	1,00000 		&	0,9999			&	4,5744E-7	&	4,5744E-5 	\\
+										&	322,0001	&	323			&	1,00000 		&	0,9999			&	4,8540E-7	&	4,8540E-5 	\\
+										&	322,0001	&	323			&	1,00000 		&	0,9999			&	4,6055E-7	&	4,6055E-5 	\\ \hline 
+	\multirow{4}{*}{2} 		&	322,5001	&	646			&	0,50000 		&	1,9999			&	1,0587E-6	&	5,2939E-5	\\
+										&	322,5001	&	646			&	0,50000 		&	1,9999			&	1,2282E-6	&	6,1413E-5	\\
+										&	322,5001	&	646			&	0,50000 		&	1,9999			&	1,0735E-6	&	0,0000536 	\\
+										&	322,5001	&	646			&	0,50000 		&	1,9999			&	9,4368E-7	&	4,7184E-5 	\\ \hline 
+	%\multirow{4}{*}{5} 		&	380,4001	&	1903		&	0,20000 		&	4,9999			&	1,7358E-6	&	3,4716E-5	\\
+	%									&	380,4007	&	1903		&	0,20000 		&	4,9999			&	9,3425E-6	&	0,0001868	\\
+	%									&	380,4003	&	1903		&	0,20000 		&	4,9999			&	4,5575E-6	&	9,1151E-5 	\\
+	%									&	380,4002	&	1903		&	0,20000 		&	4,9999			&	3,0716E-6	&	6,1433E-5 	\\ \hline 
+	%\multirow{4}{*}{10}	&	358,0001	&	3581		&	0,10000 		&	9,9999			&	4,8712E-6	&	4,8712E-5	\\
+	%									&	357,9001	&	3580		&	0,10000 		&	9,9999			&	4,2986E-6	&	4,2986E-5	\\
+	%									&	358,0004	&	3581		&	0,10000 		&	9,9999			&	1,1686E-5	&	0,0001168 	\\
+	%									&	358,0007	&	3581		&	0,10000 		&	9,9999			&	2,2300E-5	&	0,0002230 	\\ \hline
+	%\multirow{4}{*}{50}	&	383,6407	&	19183		&	0,02000 		&	49,9999		&	9,3884E-5	&	0,0001877	\\
+	%									&	383,6201	&	19182		&	0,20000 		&	49,9999		&	0,0000194	&	3,8860E-5	\\
+	%									&	383,6401	&	19183		&	0,20000 		&	49,9999		&	1,9863E-5	&	3,9726E-5 	\\
+	%									&	383,7539	&	19188		&	0,20000 		&	49,9981		&	0,0018233	&	0,0036467 	\\ \hline
+	%\multirow{4}{*}{100}	&	312,7971	&	31280		&	0,01000 		&	99,9977		&	0,0022902	&	0,0022902	\\
+	%									&	312,8002	&	31281		&	0,01000 		&	99,9999		&	6,6360249	&	6,6360E-5	\\
+	%									&	312,8826	&	31287		&	0,01000 		&	99,9927		&	0,0072389	&	0,0072389 	\\
+	%									&	312,9006	&	31291		&	0,01000 		&	99,9997		&	0,0002015	&	0,0002015 	\\ \hline
+%
+\multicolumn{7}{|c|}{. . .} \\ \hline
+	\multirow{4}{*}{250}	&	327,0160	&	81738		&	0,00400 		&	249,9479	&	0,0520258	&	0,0208103	\\
+										&	327,0132	&	81739		&	0,00400 		&	249,9532	&	0,0467881	&	0,0187152	\\
+										&	327,0402	&	81761		&	0,00400 		&	249,9997	&	0,0002219	&	8,8778E-5 	\\
+										&	327,0321	&	81759		&	0,00400 		&	249,9998	&	0,0001128	&	4,5144E-5 	\\ \hline
+	\multirow{4}{*}{500}	&	347,3804	&	112507	&	0,00308 		&	\tred{323,8696}	&	\tred{176,13030}	&	\tred{35,22606}	\\
+										&	347,3536	&	111828	&	0,00310 		&	\tred{321,9398}	&	\tred{178,06011}	&	\tred{35,61202}	\\
+										&	347,3543	&	111592	&	0,00311 		&	\tred{321,2598}	&	\tred{178,74013}	&	\tred{35,74802}	\\
+										&	347,8928	&	110281	&	0,00315 		&	\tred{316,9941}	&	\tred{183,00588}	&	\tred{36,60117}	\\ \hline
+	\multirow{4}{*}{750}	&	335,8788	&	107725	&	0,00311 		&	\tred{320,7228}	&	\tred{429,27716}	&	\tred{57,23695}	\\
+										&	335,9379	&	107917	&	0,00311 		&	\tred{321,2379}	&	\tred{428,76208}	&	\tred{57,16827}	\\
+										&	335,9450	&	108357	&	0,00310 		&	\tred{322,5408}	&	\tred{427,45914}	&	\tred{56,99455}	\\
+										&	335,9791	&	108291	&	0,00310 		&	\tred{322,3116}	&	\tred{427,68835}	&	\tred{57,02511}	\\ \hline
+  \end{tabular}
+    \caption{Resultados de los tests utilizando los cuatro canales.}\label{tab:test_4ch}
+\end{table}
+	
+	   \subsection{Cargas del sistema en cada caso.}
+	En la \autoref{tab:test_4chLoad} se puede ver la comparación de los errores con la carga del sistema (C\tsub{S}) en cada caso.
+
+  \label{tab:text_4chLoad}
+	Con cuatro canales no parece ser diferente al resto de pruebas con menos canales y aunque en los casos donde el error es alto la carga en el sistema también es importante, no llega al nivel máximo especificado en la \autoref{tab:test_cargas_sim} (esta vez 2.36 frente a 4.92), y en ambos casos es similar entre sí (2.33 y 2.36). 
+	
+	Una vez más, no es la capacidad de cálculo la que nos está limitando la frecuencia de los canales. Esta vez se ve más claramente ya que si se hace el recuento de hilos que se están ejecutando (un hilo por cada canal de adquisición, otro hilo de actualización de la gráfica y el hilo principal) no puede ser que el sistema esté sobrecargado cuando solo 1.36 procesos tienen que esperar tiempo de CPU y hay al menos seis ejecutándose en nuestro programa.
+
+%		\pagebreak
+		
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c | c | c | }
+  	\cline{1-4}\cline{6-9}
+    F (Hz) &  $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) & C\tsub{S} & \multirow{9}{*}{} & F (Hz) &  $ \bar{\epsilon_{a}} $& $ \bar{\epsilon_{r}} $ (\%) & C\tsub{S}\\   	\cline{1-4}\cline{6-9}
+    \multirow{4}{*}{1} 		&	5,6303E-7	&	5,6303E-5	&	\multirow{4}{*}{0.26}  & & \multirow{4}{*}{100}	&	0,0022902	&	0,0022902	&	\multirow{4}{*}{1.64}	\\
+										&	4,5744E-7	&	4,5744E-5 	&	&	& &	6,6360249	&	6,6360E-5	&	\\
+										&	4,8540E-7	&	4,8540E-5 	&	&	& &	0,0072389	&	0,0072389 	&	\\
+										&	4,6055E-7	&	4,6055E-5 	&	&	& &	0,0002015	&	0,0002015 	&	\\ \cline{1-4}\cline{6-9}
+	\multirow{4}{*}{2} 		&	1,0587E-6	&	5,2939E-5	&	\multirow{4}{*}{0.35} &	& 	\multirow{4}{*}{250}	&	0,0520258	&	0,0208103	&	\multirow{4}{*}{2.12}	\\
+										&	1,2282E-6	&	6,1413E-5	& & & &	0,0467881	&	0,0187152	&	\\
+										&	1,0735E-6	&	0,0000536 	&	& & &	0,0002219	&	8,8778E-5 	&	\\
+										&	9,4368E-7	&	4,7184E-5 	& & & &	0,0001128	&	4,5144E-5 	&	\\ \cline{1-4}\cline{6-9}
+	\multirow{4}{*}{5} 		&	1,7358E-6	&	3,4716E-5	&	\multirow{4}{*}{0.38} & & \multirow{4}{*}{500}	&	\tred{176,13030}	&	\tred{35,22606}		&	\multirow{4}{*}{2.33}\\
+										&	9,3425E-6	&	0,0001868	& & & &	\tred{178,06011}	&	\tred{35,61202}		&	\\
+										&	4,5575E-6	&	9,1151E-5 	&	& & &	\tred{178,74013}	&	\tred{35,74802}		&	\\
+										&	3,0716E-6	&	6,1433E-5 	&	& & &	\tred{183,00588}	&	\tred{36,60117}		&	\\ \cline{1-4}\cline{6-9}
+	\multirow{4}{*}{10}	&	4,8712E-6	&	4,8712E-5	&	\multirow{4}{*}{0.56} & & \multirow{4}{*}{750}	&	\tred{429,27716}	&	\tred{57,23695}		&	\multirow{4}{*}{2.36}\\
+										&	4,2986E-6	&	4,2986E-5	&	& & &	\tred{428,76208}	&	\tred{57,16827}		&	\\
+										&	1,1686E-5	&	0,0001168 	&	& & &	\tred{427,45914}	&	\tred{56,99455}		&	\\
+										&	2,2300E-5	&	0,0002230 	&	& & &	\tred{427,68835}	&	\tred{57,02511}		&	\\  \cline{1-4}\cline{6-9}
+	\multirow{4}{*}{50}	&	9,3884E-5	&	0,0001877	&	\multirow{4}{*}{0.63}\\
+										&	0,0000194	&	3,8860E-5	&	\\
+										&	1,9863E-5	&	3,9726E-5 	&	\\
+										&	0,0018233	&	0,0036467 	&	\\ \cline{1-4}
+  \end{tabular}
+  \caption{Comparación del error con la carga del sistema al utilizar los cuatro canales.}
+  \label{tab:test_4chLoad}
+\end{table}	
+	
+
+\section{Puesta en común de los resultados y conclusión.}
+	\subsection{El límite.}
+		En las pruebas se ha detectado un patrón de limitación por el que el interfaz tiene una frecuencia máxima total a la que puede funcionar en todo caso independientemente del número de canales.\\
+\begin{wraptable}{l}{0.28\textwidth}
+  \begin{tabular}{| c | c |}
+  	\hline
+  	Canales & $ \sum F_{max} $ 	\\ \hline
+  	1			&	1135.869				\\
+  	2			&	1256.541				\\
+  	4			&	1286.831				\\	 \hline
+  \end{tabular}
+  \caption[Frecuencias máximas obtenidas por cada canal.]{F\tsub{max} por canal.}
+  \label{tab:test_FMax}
+\end{wraptable}
+Como se puede ver en la \autoref{tab:test_FMax}, el interfaz alcanza un umbral cercano a los 1300Hz  del que no es capaz de pasar. 
+
+Se puede asegurar por tanto aplicando una margen de error del 10\% en el peor de los valores máximos obtenidos que esta solución funciona en unos umbrales de precisión seguros siempre y cuando la suma de las frecuencias de todos los canales no supere los 1000Hz aproximadamente.
+\linebreak
+	\subsection{El porqué del límite.}
+Descartada la limitación de la CPU (conclusión del test de cuatro canales en \ref{tab:text_4chLoad}) y comprobado que el sistema admite más carga de la que se está obteniendo en las pruebas con el interfaz (ver \autoref{tab:test_cargas_sim}) se achacan la falta de rendimiento al sistema de entrada/salida que parece no proveer de los datos a la velocidad necesaria a partir de dichas frecuencias y por tanto hace al software esperar ocioso.
+
+Por tanto, se debe proceder al cambio de interfaz E/S o la optimización del mismo si se desean realizar medidas a frecuencias por encima de las obtenidas en estas pruebas.

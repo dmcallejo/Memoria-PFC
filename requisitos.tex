@@ -1,0 +1,70 @@
+\documentclass[11pt, a4paper, twoside, titlepage]{book}
+% Paquetes usados
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[a4paper, top=4cm, bottom=4cm, left=3.3cm, right=3.2cm]{geometry}
+\usepackage[dvips]{graphicx}
+\usepackage{fancyhdr}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{amsmath}
+\usepackage[all]{xy}
+\usepackage{float}
+\usepackage{epigraph}
+%\usepackage{quotchap}
+
+\author{Diego Muñoz Callejo}
+\title{Documento de requisitos PFC}
+\date{\today}
+
+% Aumentar la separacion entre lineas
+\renewcommand{\baselinestretch}{1.5}
+
+
+% Para eliminar la cabecera de las paginas vacias al final de los
+% capitulos
+\makeatletter
+\def\cleardoublepage{\clearpage\if@twoside \ifodd\c@page\else
+  \hbox{}
+    \thispagestyle{empty}
+      \newpage
+        \if@twocolumn\hbox{}\newpage\fi\fi\fi}
+\makeatother
+%%
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{%
+\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{%
+\markright{\thesection.\ #1}{}}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\rightmark}
+\fancyhead[ER]{\leftmark}
+
+\begin{document}
+
+\chapter*{Requisitos.}
+	\section*{Contextualización.}
+	En los laboratorios de radiactividad y termodinámica de la Universidad de Cantabria se utilizan diversos dispositivos de medida tremendamente obsoletos o que necesitan 	sustitución por unos de coste menor, algo muy complicado de encontrar en el mundo educativo.
+
+	Uno de los dispositivos es la tarjeta de adquisición de datos \emph{Personal Computer Analyzer} cuyos documentos datan de los 80 y actualmente soporta máximo hasta Windows 98 al estar el software ligado a MS-DOS. Dada a la antigüedad de las placas algunas se están estropeando y su sustitución implica un gasto de más de mil euros, ordenador no incluido. Eso sin contar la dificultad de encontrar ordenadores antiguos que puedan montar tarjetas ISA. Esta tarjeta se encarga de la obtención de pulsos eléctricos procedentes de un amplificador que detecta pulsos de radiación de una altura determinada. El software permite el manejo de los parámetros de obtención de datos y representa la información en un histograma de hasta 1024 canales de intervalo definible.
+
+	El otro dispositivo utilizado en el laboratorio de termodinámica y física aplicada es el datalogger \emph{500 Interface} de la compañía \emph{PASCO}. Este dispositivo es más reciente, de un coste aproximado de 600 euros ordenador no incluido. El software exige ciertas limitaciones si se utilizan ordenadores en entorno Microsoft Windows, por lo que se utilizan ordenadores de Apple que eximen de estas limitaciones a las medidas, lo cual escala el precio de la solución a un nivel mayor.
+
+\pagebreak
+
+	\section*{Requisitos del software.}
+		Heredado de las soluciones actuales, se pueden definir los siguientes requisitos mínimos para nuestro sistema final.
+	\begin{itemize}
+		\item{Representación de medidas en tiempo real. }El software debe proporcionar la posibilidad de leer en tiempo real el estado de las medidas, bien en una lectura digital o en una gráfica temporal.
+		\item{Manejo de las medidas. }Para poder utilizar las medidas tomadas eficientemente, se deberá proveer la manera de combinar unas con otras, de manera que se puedan tomar medidas compuestas donde dos o más medidas se contrasten (por ejemplo, gráficas Temperatura-Presión). Estas gráficas y tablas deben ser posibles de almacenar para su posterior uso. Por supuesto, estas gráficas deben tener la posibilidad de ampliar, reducir y tomar captura de los datos representados.
+		\item{Exportación de datos. }Los datos tomados con la aplicación deben poder ser exportados a otros formatos para su manipulación. Por ejemplo en formato CSV (\textit{character-separated values}) para las tablas y PNG para las gráficas o histogramas.
+		\item{Guardar sesión. }El programa debe permitir guardar el estado actual para poder continuar en otro momento o sesión, o incluso para que el alumno pueda en su casa revisar el trabajo hecho en el laboratorio. También es una manera de realizar plantillas para los diversos experimentos que se realizarán.
+		\item{Posibilidad de realizar medidas temporales. }Esto es, el software se programa para que realice una medida a \textit{X} sensores durante tanto tiempo.
+		\item{Posibilidad de realizar cálculos con las medidas tomadas. }Para ciertos experimentos puede ser interesante realizar automáticamente ciertos cálculos matemáticos más o menos complejos. La automatización de esta tarea puede suponer una ayuda para el alumno y el profesor.
+	\end{itemize}
+	
+\end{document}

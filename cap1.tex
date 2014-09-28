@@ -1,0 +1,86 @@
+\chapter{Introducción.}
+\epigraphhead [30]{%
+  \epigraph{``Hay gente que cree que odia los ordenadores. Lo que odian en realidad son los malos programadores"}%
+  {Larry Niven, escritor.}%
+}
+Como primer paso a la hora de abordar un proyecto se debe analizar el contexto en el que se va a trabajar y establecer unos objetivos que definan qué se quiere conseguir. En este capítulo se tratan estos temas fundamentales así como los materiales y métodos usados durante el desarrollo del mismo.
+
+\section{Introducción y objetivos.}
+El alto coste de reemplazo y/o actualización de material académico en estos tiempos de crisis económica es algo que no se puede permitir cualquier Universidad. La obsolescencia, desgaste y avería de los mismos suponen un reto económico que con este proyecto queremos reducir mediante el uso de hardware de bajo coste y una solución personalizada a los requerimientos de cada laboratorio. 
+Este proyecto se centra en los laboratorios de radiactividad, y termodinámica y física aplicada, donde en el primero disponen de material obsoleto y de muy cara modernización y en el segundo material moderno pero de un coste relativamente desorbitado.
+
+
+\subsection{Objetivos.}
+El objetivo principal ha sido diseñar y construir una solución única para ambos laboratorios manteniendo un coste realmente bajo, demostrando así que no es necesario un desembolso exagerado para la docencia. Para ello es inevitable el recorte de las características de los actuales equipos y diseñar algo menos ambicioso pero que cumpla con unos mínimos requisitos que no son ni más ni menos que los necesarios para realizar las diferentes prácticas de los alumnos durante el curso.
+
+\subsection{Proyecto de Fin de Carrera Paralelo}
+Complementario al software desarrollado en este proyecto, un hardware adecuado es necesario para recibir, procesar y digitalizar las señales analógicas que formarán la verdadera utilidad del software. Este hardware se desarrolla en otro Proyecto de Fin de Carrera paralelo a éste en mutua colaboración.
+De esta manera, mientras en este Proyecto se realizará el software necesario para el control de la adquisición de datos, almacenamiento, tratamiento y muestra de los mismos así como herramientas de análisis, otro proyecto se encarga de la solución hardware en la que se apoyará fundamentalmente este software recibiendo las distintas señales, adaptándolas y disponiéndolas adecuadamente para el software.
+ 
+\subsection{Estructura de la memoria.}
+A continuación se detalla la división de la memoria en capítulos y una breve descripción de cada uno de ellos:
+\begin{itemize}
+  \item Capítulo 1: Sirve de introducción al proyecto, así como a los objetivos y peculiaridades del mismo. En un apartado dedicado se explica la metodología utilizada así como los materiales que se han dispuesto para el desarrollo.
+  \item Capítulo 2: Presenta el problema que trata de solventar este proyecto, se realiza un análisis de requisitos y propone una solución.
+  \item Capítulo 3: Se completa la especificación de la solución así como las herramientas utilizadas en el desarrollo de la misma.
+  \item Capítulo 4: Detalla cómo se ha implementado el interfaz gráfico sección a sección.
+  \item Capítulo 5: Detalla la implementación del modelo y el simulador desarrollado.
+  \item Capítulo 6: El primer prototipo hardware, su integración y funcionamiento en la aplicación.
+  \item Capítulo 7: Batalla de tests sobre el sistema final con objetivo de comprobar y evaluar su rendimiento.
+  \item Capítulo 8: Conclusiones y trabajos futuros inspirados por este proyecto.
+  \item Bibliografía y referencias: Contiene la lista de fuentes consultadas.
+  \item Apéndices.
+\end{itemize}
+
+\section{Material y métodos.}
+En esta sección se analiza el estado actual de las áreas a tratar y se detallan las herramientas de las que disponemos para el desarrollo del proyecto así como la metodología que se ha utilizado.
+
+\subsection{Antecedentes.}
+  En el laboratorio de radiactividad el dispositivo utilizado para la espectroscopía de los elementos es la tarjeta de adquisición de datos \emph{Personal Computer Analyzer} cuyos documentos datan de los 80 y actualmente soporta máximo hasta Windows 98 al estar el software ligado a MS-DOS. Dada a la antigüedad de las placas algunas se están estropeando y su sustitución implica un gasto de más de mil euros (ordenador no incluido). También se cuenta con la dificultad de encontrar ordenadores antiguos que puedan montar tarjetas ISA y la avería de los mismos por su alta antigüedad. 
+ Esta tarjeta se encarga de la obtención de pulsos eléctricos procedentes de un amplificador conectado a un fotodetector que detecta pulsos de radiación de una amplitud determinada. El software permite el manejo de los parámetros de obtención de datos y representa la información en un histograma de hasta 1024 canales de intervalo definible.
+
+  El dispositivo utilizado en el laboratorio de termodinámica y física aplicada es el datalogger \emph{500 Interface} de la compañía \emph{PASCO}. Este dispositivo es más reciente, de un coste aproximado de 600 euros ordenador no incluido. La versión para Windows del software tiene ciertas limitaciones, por lo que se utilizan ordenadores de Apple que eximen las medidas de estas limitaciones, lo cual escala el precio de la solución a un nivel mayor.
+  Este datalogger dispone de cinco entradas para cinco sensores -dos digitales, tres analógicos- del mismo ensamblador, buffer interno, conversor analógico digital de 12 bits, una frecuencia de muestreo de 22kHz y es multiplataforma entre sus características más importantes. 
+ 
+\subsection{Estado del arte.} 
+ El mundo de los SBCs es algo relativamente reciente, ya que no ha sido hasta 2012 cuando la Raspberry Pi hizo su aparición en público, revolucionando lo que hasta el momento había sido un monopolio del microcontrolador Arduino, y se dio entonces un nuevo punto de vista al concepto de SBC como el de un ordenador de propósito general.
+ 
+  La Raspberry Pi en principio fue diseñada para la educación en las escuelas británicas de las ciencias de computación pero pronto se convirtió rápidamente en un juguete para profesionales y entusiastas, ya que pese a tener el tamaño de una tarjeta de crédito era capaz de ejecutar eficientemente el sistema operativo Linux y además de disponer unas capacidades multimedia excepcionales, como la posibilidad de reproducir vídeo HD gracias a su decodificador H.264 por hardware.
+  
+  Algo más de dos años después de su lanzamiento, la placa se sigue vendiendo sin haber recibido ni una mejora en el hardware que la compone y cada vez más gente prueba el mundo de linux, la programación o simplemente se monta su propio centro multimedia por poco más de 30€. La comunidad sigue creciendo día a día y cada vez hay más ingenios creados gracias a ella (sola o en combinación con Arduino).
+  
+  En este proyecto queremos explorar las posibilidades de la Raspberry Pi en lo que es algo parecido a un desafío: Sustituir material docente del centro con un coste 20 veces superior por tan solo una caja alimentada por un simple cargador de móvil.
+ 
+\subsection{Material y herramientas.}
+  Al tratarse de un desarrollo de software, las características de la solución final han sido escasas:
+  \begin{itemize}
+    \item{Monitor Dell de 17'' con resolución de hasta 1024x768@85Hz.}
+    \item{Raspberry Pi Model B Rev.1.0 256MB RAM.}
+    \item{Tarjeta SDHC Trascend Class 10 de 16GB.}
+    \item{\emph{HDMI to VGA adapter with power and audio}, adaptador HDMI a VGA de procedencia china.}
+    \item{Teclado y ratón USB Dell}
+    \item{Cargador de teléfono móvil Nokia.}
+  \end{itemize}
+    Estos podrían ser los requisitos necesarios para el funcionamiento de la solución, muchos de ellos son ``reciclados'' por lo que el coste es muy bajo.
+
+  El desarrollo y testeo del software se ha realizado en distintos entornos por comodidad fuera de la Raspberry Pi: Mac OS X Mavericks, Windows 7 SP1, Debian 7.0 y Raspbian (el objetivo final), por lo que se ha asegurado que el mismo sea portable\footnote{En las fases finales dónde ha sido necesario el uso del prototipo de interfaz de adquisición de datos el desarrollo se ha cerrado exclusivamente a la Raspberry Pi, aunque su portabilidad a otros sistemas sería cuestión de ajustar varios puntos del código.} a estas cuatro plataformas sin problemas al elegir como lenguaje de desarrollo Python 2.7.8. 
+
+ \subsection{Metodología.}
+  Se ha usado una metodología estándar para el desarrollo de software: 
+  \begin{itemize}
+   \item  Se ha estudiado cual ha sido el contexto para el que se utilizará la nueva solución. 
+   	\item Se ha observado a los usuarios utilizar las soluciones actuales intentando comprender qué hacían y por qué, preguntando cuando fuere necesario sin interferir en su procedimiento. 
+   	\item Se han realizado entrevistas con los mismos para recabar objetivos, mejoras y utilidades; es decir, requisitos del proyecto. 
+   	\item Se realizó una investigación de soluciones, viabilidad y desarrollo de prototipos tanto software como hardware (en el proyecto paralelo). 
+   	\item Se han llegado a conclusiones y posibles trabajos futuros.
+  \end{itemize}
+  
+  
+  El hecho de que el proyecto haya sido en paralelo con otro ha supuesto un desafío extra ya que esta parte del producto final se apoya fuertemente en la otra. Por tanto se realizó un desarrollo ``en puente", en el cual aquí se desarrolló una parte del mismo y en el otro proyecto la otra parte. 
+  
+  Se tuvieron que acordar modelos, ideas y especificaciones para que ambos proyectos llegaran a encontrarse y las piezas encajaran como un puzzle. La transición fue suave, apenas hubo que modificar código e incluso se añadieron ciertas funcionalidades al ver ambas partes funcionando al unísono, por lo que se puede hablar de éxito en el trabajo conjunto.
+  
+  
+  En el desarrollo del software se ha utilizado el sistema de versioning ofrecido gratuitamente por \emph{GitHub.com}. Github ofrece un servicio gratuito de repositorios abiertos y software necesario para utilizarlos además de un útil acceso web. Es el servicio en alza desde hace varios años y para este desarrollo no se ha dudado un instante en utilizarlo dado a las facilidades ofrecidas y la naturaleza \emph{OpenSource} del mismo.
+  
+  Este proyecto se puede encontrar bajo la dirección: \url{https://github.com/dmcelectrico/PFC}
